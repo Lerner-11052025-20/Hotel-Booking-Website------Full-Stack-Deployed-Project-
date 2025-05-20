@@ -109,3 +109,4 @@ export const getHotelBookings = async (req, res) => {
     }
 }
 
+export default checkAvailability;
