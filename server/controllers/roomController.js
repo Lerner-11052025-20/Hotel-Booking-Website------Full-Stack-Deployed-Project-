@@ -66,16 +66,35 @@ export const getRooms = async (req, res) => {
 
 
 
+// // API to get all rooms for a specific hotel
+// export const getOwnerRooms = async (req, res) => {
+//     try {
+//         const hotelData = await Hotel({ owner: req.auth.userId });
+//         const rooms = await Room.find({ hotel: hotelData._id.toString() }).populate("hotel");
+//         res.json({ success: true, rooms });
+//     } catch (error) {
+//         res.json({ success: false, message: error.message });
+//     }
+// }
 // API to get all rooms for a specific hotel
 export const getOwnerRooms = async (req, res) => {
     try {
-        const hotelData = await Hotel({ owner: req.auth.userId });
+        // Find the hotel owned by the current user
+        const hotelData = await Hotel.findOne({ owner: req.auth.userId });
+
+        // If hotel not found, return error
+        if (!hotelData) {
+            return res.status(404).json({ success: false, message: "Hotel not found" });
+        }
+
+        // Find rooms associated with that hotel
         const rooms = await Room.find({ hotel: hotelData._id.toString() }).populate("hotel");
+
         res.json({ success: true, rooms });
     } catch (error) {
-        res.json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
-}
+};
 
 
 
